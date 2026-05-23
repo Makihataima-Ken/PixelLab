@@ -4,7 +4,7 @@ namespace PixelLab.Models;
 
 public class ImageData
 {
-    public BitmapImage? OriginalImage { get; set; }
+    public WriteableBitmap? OriginalImage { get; set; }
 
-    public BitmapImage? WorkingImage { get; set; }
+    public WriteableBitmap? WorkingImage { get; set; }
 }

@@ -6,7 +6,7 @@ namespace PixelLab.Services;
 
 public class ImageService
 {
-    public BitmapImage? LoadImage()
+    public WriteableBitmap? LoadImage()
     {
         OpenFileDialog dialog = new();
 
@@ -15,17 +15,20 @@ public class ImageService
         if (dialog.ShowDialog() != true)
             return null;
 
-        BitmapImage bitmap = new();
+        BitmapImage bitmapImage = new();
 
         using FileStream stream = new(dialog.FileName, FileMode.Open);
 
-        bitmap.BeginInit();
-        bitmap.CacheOption = BitmapCacheOption.OnLoad;
-        bitmap.StreamSource = stream;
-        bitmap.EndInit();
+        bitmapImage.BeginInit();
+        bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+        bitmapImage.StreamSource = stream;
+        bitmapImage.EndInit();
 
-        bitmap.Freeze();
+        bitmapImage.Freeze();
 
-        return bitmap;
+        // Convert to WriteableBitmap
+        WriteableBitmap writeableBitmap = new(bitmapImage);
+
+        return writeableBitmap;
     }
 }
