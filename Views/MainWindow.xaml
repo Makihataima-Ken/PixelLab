@@ -31,7 +31,7 @@
             <Button Content="Reset Image"
                     Height="40"
                     Command="{Binding ResetImageCommand}"/>
-                    
+
             <TextBlock Text="Red"
                     Foreground="White"
                     Margin="0 20 0 5"/>
@@ -58,6 +58,30 @@
                     Maximum="2"
                     Value="{Binding BlueMultiplier}"
                     TickFrequency="0.1"/>
+
+            <TextBlock Text="Hue"
+                    Foreground="White"
+                    Margin="0 20 0 5"/>
+
+            <Slider Minimum="-180"
+                    Maximum="180"
+                    Value="{Binding HueShift}"/>
+
+            <TextBlock Text="Saturation"
+                    Foreground="White"
+                    Margin="0 20 0 5"/>
+
+            <Slider Minimum="0"
+                    Maximum="2"
+                    Value="{Binding SaturationMultiplier}"/>
+
+            <TextBlock Text="Value"
+                    Foreground="White"
+                    Margin="0 20 0 5"/>
+
+            <Slider Minimum="0"
+                    Maximum="2"
+                    Value="{Binding ValueMultiplier}"/>
 
         </StackPanel>
 

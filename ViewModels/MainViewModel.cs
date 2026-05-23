@@ -10,6 +10,7 @@ public partial class MainViewModel : ObservableObject
 {
     private readonly ImageService _imageService;
     private readonly RgbProcessor _rgbProcessor;
+    private readonly HsvProcessor _hsvProcessor;
 
     private WriteableBitmap? _originalImage;
 
@@ -26,10 +27,20 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private double blueMultiplier = 1.0;
 
+    [ObservableProperty]
+    private double hueShift = 0;
+
+    [ObservableProperty]
+    private double saturationMultiplier = 1;
+
+    [ObservableProperty]
+    private double valueMultiplier = 1;
+
     public MainViewModel()
     {
         _imageService = new ImageService();
         _rgbProcessor = new RgbProcessor();
+        _hsvProcessor = new HsvProcessor();
     }
     
     [RelayCommand]
@@ -70,6 +81,19 @@ public partial class MainViewModel : ObservableObject
             BlueMultiplier);
     }
 
+    private void ApplyHsvAdjustments()
+    {
+        if (_originalImage == null)
+            return;
+
+        DisplayedImage =
+            _hsvProcessor.ApplyHsvAdjustments(
+                _originalImage,
+                HueShift,
+                SaturationMultiplier,
+                ValueMultiplier);
+    }
+
     partial void OnRedMultiplierChanged(double value)
     {
         ApplyRgbAdjustments();
@@ -83,5 +107,21 @@ public partial class MainViewModel : ObservableObject
     partial void OnBlueMultiplierChanged(double value)
     {
         ApplyRgbAdjustments();
+    }
+
+
+    partial void OnHueShiftChanged(double value)
+    {
+        ApplyHsvAdjustments();
+    }
+
+    partial void OnSaturationMultiplierChanged(double value)
+    {
+        ApplyHsvAdjustments();
+    }
+
+    partial void OnValueMultiplierChanged(double value)
+    {
+        ApplyHsvAdjustments();
     }
 }
