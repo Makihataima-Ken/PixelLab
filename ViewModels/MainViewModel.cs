@@ -26,6 +26,8 @@ public partial class MainViewModel : ObservableObject
 
     public IEnumerable<ColorSystemType> AvailableSystems => Enum.GetValues<ColorSystemType>();
 
+    public IEnumerable<int> QuantizationLevels { get; } = new[] { 256, 128, 64, 32, 16, 8, 4, 2 };
+
     public MainViewModel()
     {
         _imageService = new ImageService();
