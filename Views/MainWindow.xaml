@@ -4,106 +4,142 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PixelLab"
+        xmlns:hx="http://helix-toolkit.org/wpf"
         mc:Ignorable="d"
-        Title="PIxelLab" Height="700" Width="1200">
-    <Grid Background="#1E1E1E">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="250"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="300"/>
-        </Grid.ColumnDefinitions>
+        Title="PixelLab" Height="700" Width="1200"
+        AllowDrop="True" Drop="Window_Drop">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Window.Resources>
+    <TabControl Background="#1E1E1E">
+        <TabItem Header="Image Lab" Foreground="Black">
+            <Grid Background="#1E1E1E">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="250"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="300"/>
+                </Grid.ColumnDefinitions>
 
-        <!-- LEFT PANEL -->
-        <StackPanel Grid.Column="0"
-                    Background="#252526"
-                    >
+                <!-- TOP TOOLBAR -->
+                <StackPanel Grid.Row="0" Grid.ColumnSpan="3" Orientation="Horizontal" Background="#2D2D30" Margin="10">
+                    <TextBlock Text="PixelLab" FontSize="20" Foreground="White" Margin="0 0 20 0" VerticalAlignment="Center"/>
+                    <Button Content="Load Image" Width="100" Margin="0 0 10 0" Command="{Binding LoadImageCommand}"/>
+                    <Button Content="Save Image" Width="100" Margin="0 0 10 0" Command="{Binding SaveImageCommand}"/>
+                    <Button Content="Reset" Width="100" Margin="0 0 10 0" Command="{Binding ResetImageCommand}"/>
+                    
+                    <TextBlock Text="Color System:" Foreground="White" Margin="20 0 10 0" VerticalAlignment="Center"/>
+                    <ComboBox Width="120" VerticalAlignment="Center"
+                              ItemsSource="{Binding AvailableSystems}"
+                              SelectedItem="{Binding Settings.CurrentSystem}"/>
+                </StackPanel>
 
-            <TextBlock Text="PixelLab"
-                       FontSize="28"
-                       Foreground="White"
-                       Margin="0 0 0 20"/>
+                <!-- LEFT PANEL -->
+                <StackPanel Grid.Row="1" Grid.Column="0" Background="#252526" Margin="10" DataContext="{Binding Settings}">
 
-            <Button Content="Load Image"
-                    Height="40"
-                    Margin="0 0 0 10"
-                    Command="{Binding LoadImageCommand}"/>
+                    <TextBlock Text="Channels" FontSize="18" Foreground="White" Margin="0 0 0 20"/>
 
-            <Button Content="Reset Image"
-                    Height="40"
-                    Command="{Binding ResetImageCommand}"/>
+                    <!-- Channel 1 -->
+                    <StackPanel Margin="0 0 0 15">
+                        <CheckBox Content="{Binding Channel1Name}" IsChecked="{Binding Channel1Enabled}" Foreground="White" Margin="0 0 0 5"/>
+                        <Slider Minimum="{Binding Channel1Min}" Maximum="{Binding Channel1Max}" Value="{Binding Channel1Value}" IsEnabled="{Binding Channel1Enabled}"/>
+                    </StackPanel>
 
-            <TextBlock Text="Red"
-                    Foreground="White"
-                    Margin="0 20 0 5"/>
+                    <!-- Channel 2 -->
+                    <StackPanel Margin="0 0 0 15">
+                        <CheckBox Content="{Binding Channel2Name}" IsChecked="{Binding Channel2Enabled}" Foreground="White" Margin="0 0 0 5"/>
+                        <Slider Minimum="{Binding Channel2Min}" Maximum="{Binding Channel2Max}" Value="{Binding Channel2Value}" IsEnabled="{Binding Channel2Enabled}"/>
+                    </StackPanel>
 
-            <Slider Minimum="0"
-                    Maximum="2"
-                    Value="{Binding RedMultiplier}"
-                    TickFrequency="0.1"/>
+                    <!-- Channel 3 -->
+                    <StackPanel Margin="0 0 0 15">
+                        <CheckBox Content="{Binding Channel3Name}" IsChecked="{Binding Channel3Enabled}" Foreground="White" Margin="0 0 0 5"/>
+                        <Slider Minimum="{Binding Channel3Min}" Maximum="{Binding Channel3Max}" Value="{Binding Channel3Value}" IsEnabled="{Binding Channel3Enabled}"/>
+                    </StackPanel>
 
-            <TextBlock Text="Green"
-                    Foreground="White"
-                    Margin="0 20 0 5"/>
+                    <!-- Channel 4 -->
+                    <StackPanel Margin="0 0 0 15" Visibility="{Binding IsChannel4Visible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <CheckBox Content="{Binding Channel4Name}" IsChecked="{Binding Channel4Enabled}" Foreground="White" Margin="0 0 0 5"/>
+                        <Slider Minimum="{Binding Channel4Min}" Maximum="{Binding Channel4Max}" Value="{Binding Channel4Value}" IsEnabled="{Binding Channel4Enabled}"/>
+                    </StackPanel>
 
-            <Slider Minimum="0"
-                    Maximum="2"
-                    Value="{Binding GreenMultiplier}"
-                    TickFrequency="0.1"/>
+                </StackPanel>
 
-            <TextBlock Text="Blue"
-                    Foreground="White"
-                    Margin="0 20 0 5"/>
+                <!-- CENTER IMAGE -->
+                <Border Grid.Row="1" Grid.Column="1" Margin="10" Background="#333">
+                    <Image Source="{Binding DisplayedImage}" Stretch="Uniform"/>
+                </Border>
 
-            <Slider Minimum="0"
-                    Maximum="2"
-                    Value="{Binding BlueMultiplier}"
-                    TickFrequency="0.1"/>
+                <!-- RIGHT PANEL -->
+                <StackPanel Grid.Row="1" Grid.Column="2" Background="#252526" Margin="10">
+                    
+                    <TextBlock Text="Color Quantization" FontSize="24" Foreground="White" Margin="0 0 0 10"/>
+                    <StackPanel Orientation="Horizontal" Margin="0 0 0 20">
+                        <TextBlock Text="Levels:" Foreground="White" VerticalAlignment="Center" Margin="0 0 10 0"/>
+                        <ComboBox Width="100" ItemsSource="{Binding QuantizationLevels}" SelectedItem="{Binding Settings.QuantizationLevel}"/>
+                    </StackPanel>
 
-            <TextBlock Text="Hue"
-                    Foreground="White"
-                    Margin="0 20 0 5"/>
+                    <TextBlock Text="Image Info" FontSize="24" Foreground="White" Margin="0 0 0 20"/>
 
-            <Slider Minimum="-180"
-                    Maximum="180"
-                    Value="{Binding HueShift}"/>
+                    <Grid DataContext="{Binding ImageInfoData}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
 
-            <TextBlock Text="Saturation"
-                    Foreground="White"
-                    Margin="0 20 0 5"/>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Name: " Foreground="LightGray" Margin="0,5"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding FileName}" Foreground="White" Margin="5,5" TextWrapping="Wrap"/>
 
-            <Slider Minimum="0"
-                    Maximum="2"
-                    Value="{Binding SaturationMultiplier}"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Format: " Foreground="LightGray" Margin="0,5"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Format}" Foreground="White" Margin="5,5"/>
 
-            <TextBlock Text="Value"
-                    Foreground="White"
-                    Margin="0 20 0 5"/>
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Width: " Foreground="LightGray" Margin="0,5"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Width}" Foreground="White" Margin="5,5"/>
 
-            <Slider Minimum="0"
-                    Maximum="2"
-                    Value="{Binding ValueMultiplier}"/>
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Height: " Foreground="LightGray" Margin="0,5"/>
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Height}" Foreground="White" Margin="5,5"/>
 
-        </StackPanel>
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Size: " Foreground="LightGray" Margin="0,5"/>
+                        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding FormattedStorageSize}" Foreground="White" Margin="5,5"/>
 
-        <!-- CENTER IMAGE -->
-        <Border Grid.Column="1"
-                Margin="10"
-                Background="#333">
+                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Total Pixels: " Foreground="LightGray" Margin="0,5"/>
+                        <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding TotalPixels}" Foreground="White" Margin="5,5"/>
+                    </Grid>
+                </StackPanel>
+            </Grid>
+        </TabItem>
 
-            <Image Source="{Binding DisplayedImage}"
-                   Stretch="Uniform"/>
-        </Border>
+        <TabItem Header="3D Color Cube" Foreground="Black">
+            <Grid Background="#1E1E1E">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="300"/>
+                </Grid.ColumnDefinitions>
 
-        <!-- RIGHT PANEL -->
-        <StackPanel Grid.Column="2"
-                    Background="#252526"
-                    >
+                <hx:HelixViewport3D Grid.Column="0" ZoomExtentsWhenLoaded="True" Background="#222" MouseDown="HelixViewport3D_MouseDown">
+                    <hx:DefaultLights/>
+                    <ModelVisual3D x:Name="ColorCubeModel"/>
+                </hx:HelixViewport3D>
 
-            <TextBlock Text="Image Info"
-                       FontSize="24"
-                       Foreground="White"/>
-
-        </StackPanel>
-
-    </Grid>
+                <StackPanel Grid.Column="1" Background="#252526" Margin="10">
+                    <TextBlock Text="Selected Color Info" FontSize="20" Foreground="White" Margin="0 0 0 20"/>
+                    <TextBlock Text="Click a sphere on the cube to inspect the color values across all supported color systems." 
+                               Foreground="LightGray" TextWrapping="Wrap" Margin="0 0 0 20"/>
+                    <ContentControl Content="{Binding SelectedColorValues}" Foreground="White"/>
+                </StackPanel>
+            </Grid>
+        </TabItem>
+    </TabControl>
 </Window>
