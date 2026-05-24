@@ -8,6 +8,7 @@ using PixelLab.ViewModels;
 using PixelLab.Models;
 using System.Windows.Input;
 using System.Linq;
+using System.Windows.Threading;
 
 namespace PixelLab;
 
@@ -16,6 +17,9 @@ namespace PixelLab;
 /// </summary>
 public partial class MainWindow : Window
 {
+    private Point _mouseDownPosition;
+    private bool _isLeftClickCandidate;
+
     public MainWindow()
     {
         InitializeComponent();
@@ -117,6 +121,11 @@ public partial class MainWindow : Window
                 }
             }
         }
+
+        Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+        {
+            ColorCubeViewport.ZoomExtents();
+        }));
     }
 
     private void Window_Drop(object sender, DragEventArgs e)
@@ -134,27 +143,57 @@ public partial class MainWindow : Window
         }
     }
 
-    private void HelixViewport3D_MouseDown(object sender, MouseButtonEventArgs e)
+    private void HelixViewport3D_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
-        if (sender is HelixViewport3D viewport)
+        if (sender is not HelixViewport3D viewport)
         {
-            var hit = viewport.Viewport.FindHits(e.GetPosition(viewport)).FirstOrDefault();
-            if (hit != null && hit.Visual is Visual3D visual)
-            {
-                var name = visual.GetName();
-                if (!string.IsNullOrEmpty(name))
-                {
-                    var parts = name.Split(',');
-                    if (parts.Length == 3)
-                    {
-                        byte r = byte.Parse(parts[0]);
-                        byte g = byte.Parse(parts[1]);
-                        byte b = byte.Parse(parts[2]);
+            _isLeftClickCandidate = false;
+            return;
+        }
 
-                        if (DataContext is MainViewModel vm)
-                        {
-                            vm.UpdateSelectedColor(r, g, b);
-                        }
+        _mouseDownPosition = e.GetPosition(viewport);
+        _isLeftClickCandidate = true;
+    }
+
+    private void HelixViewport3D_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+    {
+        if (sender is not HelixViewport3D viewport)
+        {
+            _isLeftClickCandidate = false;
+            return;
+        }
+
+        if (!_isLeftClickCandidate)
+        {
+            return;
+        }
+
+        var releasePosition = e.GetPosition(viewport);
+        var movement = releasePosition - _mouseDownPosition;
+        const double clickThreshold = 4.0;
+        if (Math.Abs(movement.X) > clickThreshold || Math.Abs(movement.Y) > clickThreshold)
+        {
+            _isLeftClickCandidate = false;
+            return;
+        }
+
+        _isLeftClickCandidate = false;
+
+        var hit = viewport.Viewport.FindHits(releasePosition).FirstOrDefault();
+        if (hit != null && hit.Visual is Visual3D visual)
+        {
+            var name = visual.GetName();
+            if (!string.IsNullOrEmpty(name))
+            {
+                var parts = name.Split(',');
+                if (parts.Length == 3
+                    && byte.TryParse(parts[0], out var r)
+                    && byte.TryParse(parts[1], out var g)
+                    && byte.TryParse(parts[2], out var b))
+                {
+                    if (DataContext is MainViewModel vm)
+                    {
+                        vm.UpdateSelectedColor(r, g, b);
                     }
                 }
             }
