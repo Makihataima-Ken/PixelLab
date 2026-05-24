@@ -32,12 +32,12 @@ Select a color system to dynamically update the control sliders.
 - All modifications process in **real-time** on the loaded image.
 
 ### 5. Color Quantization
-A uniform color quantization algorithm allows reducing the color depth of the image dynamically. By selecting the number of "Levels", you decrease the bit depth per channel, allowing visualization of low-color palettes (e.g., simulating retro graphics).
+A uniform color quantization algorithm allows reducing the color depth of the image dynamically. By selecting a palette size, you can limit the image to a smaller number of colors (for example, 4 colors) to visualize low-color palettes and retro-style constraints.
 
-### 6. 3D RGB Color Cube (HelixToolkit)
-Navigate to the **3D Color Cube** tab to explore a fully interactive, 3D spatial representation of the RGB color model.
-- Rotate and zoom the color cube.
-- **Click to Inspect:** Click on any sphere in the cube to see its mathematically converted values across all supported color systems (RGB, HSV, CMYK, YUV, YCbCr, LAB).
+### 6. Color Space Visualization (HelixToolkit)
+Navigate to the **Color Spaces** tab to explore interactive 3D point-cloud views and 2D slices for the supported color systems.
+- Rotate and zoom the 3D view.
+- Click any sphere or 2D slice point to inspect its mathematically converted values across all supported color systems (RGB, HSV, CMYK, YUV, YCbCr, LAB).
 
 ### 7. Core Tools
 - **Save Image:** Export your current processed image to disk as a PNG or JPG.

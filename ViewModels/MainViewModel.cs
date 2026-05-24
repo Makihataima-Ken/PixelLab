@@ -10,6 +10,8 @@ namespace PixelLab.ViewModels;
 
 public partial class MainViewModel : ObservableObject
 {
+    private static readonly QuantizationOption OriginalQuantizationOption = new("Original", 0);
+
     private readonly ImageService _imageService;
     private readonly ImageProcessingService _processingService;
 
@@ -26,7 +28,21 @@ public partial class MainViewModel : ObservableObject
 
     public IEnumerable<ColorSystemType> AvailableSystems => Enum.GetValues<ColorSystemType>();
 
-    public IEnumerable<int> QuantizationLevels { get; } = new[] { 256, 128, 64, 32, 16, 8, 4, 2 };
+    public IReadOnlyList<QuantizationOption> QuantizationOptions { get; } = new[]
+    {
+        OriginalQuantizationOption,
+        new QuantizationOption("256 colors", 256),
+        new QuantizationOption("128 colors", 128),
+        new QuantizationOption("64 colors", 64),
+        new QuantizationOption("32 colors", 32),
+        new QuantizationOption("16 colors", 16),
+        new QuantizationOption("8 colors", 8),
+        new QuantizationOption("4 colors", 4),
+        new QuantizationOption("2 colors", 2)
+    };
+
+    [ObservableProperty]
+    private QuantizationOption selectedQuantizationOption = OriginalQuantizationOption;
 
     public MainViewModel()
     {
@@ -35,6 +51,7 @@ public partial class MainViewModel : ObservableObject
         
         Settings = new ColorSystemSettings();
         Settings.SetupForSystem(ColorSystemType.RGB);
+        Settings.QuantizationLevel = SelectedQuantizationOption.ColorCount;
 
         Settings.PropertyChanged += (s, e) =>
         {
@@ -96,7 +113,7 @@ public partial class MainViewModel : ObservableObject
         if (_originalImage == null)
             return;
 
-        Settings.QuantizationLevel = 256;
+        SelectedQuantizationOption = OriginalQuantizationOption;
         Settings.SetupForSystem(ColorSystemType.RGB);
         ApplyAdjustments();
     }
@@ -109,25 +126,30 @@ public partial class MainViewModel : ObservableObject
         DisplayedImage = _processingService.ApplyAdjustments(_originalImage, Settings);
     }
 
+    partial void OnSelectedQuantizationOptionChanged(QuantizationOption value)
+    {
+        Settings.QuantizationLevel = value.ColorCount;
+    }
+
     [ObservableProperty]
     private string selectedColorValues = "No color selected.";
 
     public void UpdateSelectedColor(byte r, byte g, byte b)
     {
         var sb = new System.Text.StringBuilder();
-        sb.AppendLine($"RGB: R={r}, G={g}, B={b}\n");
+        sb.AppendLine($"RGB: R={r}, G={g}, B={b}");
 
         ColorConversionService.RgbToHsv(r, g, b, out double h, out double s, out double v);
-        sb.AppendLine($"HSV: H={h:0.##}, S={s:0.##}, V={v:0.##}\n");
+        sb.AppendLine($"HSV: H={h:0.##} deg, S={s * 100:0.##}%, V={v * 100:0.##}%");
 
         ColorConversionService.RgbToCmyk(r, g, b, out double c, out double m, out double y, out double k);
-        sb.AppendLine($"CMYK: C={c:0.##}, M={m:0.##}, Y={y:0.##}, K={k:0.##}\n");
+        sb.AppendLine($"CMYK: C={c * 100:0.##}%, M={m * 100:0.##}%, Y={y * 100:0.##}%, K={k * 100:0.##}%");
 
         ColorConversionService.RgbToYuv(r, g, b, out double yYuv, out double u, out double vYuv);
-        sb.AppendLine($"YUV: Y={yYuv:0.##}, U={u:0.##}, V={vYuv:0.##}\n");
+        sb.AppendLine($"YUV: Y={yYuv:0.##}, U={u:0.##}, V={vYuv:0.##}");
 
         ColorConversionService.RgbToYCbCr(r, g, b, out double yCbCr, out double cb, out double cr);
-        sb.AppendLine($"YCbCr: Y={yCbCr:0.##}, Cb={cb:0.##}, Cr={cr:0.##}\n");
+        sb.AppendLine($"YCbCr: Y={yCbCr:0.##}, Cb={cb:0.##}, Cr={cr:0.##}");
 
         ColorConversionService.RgbToLab(r, g, b, out double l, out double a, out double bLab);
         sb.AppendLine($"LAB: L={l:0.##}, a={a:0.##}, b={bLab:0.##}");

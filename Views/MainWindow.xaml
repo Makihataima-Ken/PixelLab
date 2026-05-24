@@ -79,8 +79,11 @@
                     
                     <TextBlock Text="Color Quantization" FontSize="24" Foreground="White" Margin="0 0 0 10"/>
                     <StackPanel Orientation="Horizontal" Margin="0 0 0 20">
-                        <TextBlock Text="Levels:" Foreground="White" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                        <ComboBox Width="100" ItemsSource="{Binding QuantizationLevels}" SelectedItem="{Binding Settings.QuantizationLevel}"/>
+                        <TextBlock Text="Palette:" Foreground="White" VerticalAlignment="Center" Margin="0 0 10 0"/>
+                        <ComboBox Width="120"
+                                  ItemsSource="{Binding QuantizationOptions}"
+                                  DisplayMemberPath="Label"
+                                  SelectedItem="{Binding SelectedQuantizationOption}"/>
                     </StackPanel>
 
                     <TextBlock Text="Image Info" FontSize="24" Foreground="White" Margin="0 0 0 20"/>
@@ -121,29 +124,43 @@
             </Grid>
         </TabItem>
 
-        <TabItem Header="3D Color Cube" Foreground="Black">
+        <TabItem Header="Color Spaces" Foreground="Black">
             <Grid Background="#1E1E1E">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="300"/>
                 </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
 
-                <hx:HelixViewport3D Grid.Column="0" ZoomExtentsWhenLoaded="True" Background="#222" MouseDown="HelixViewport3D_MouseDown">
+                <hx:HelixViewport3D Grid.Row="0" Grid.Column="0" ZoomExtentsWhenLoaded="True" Background="#222" MouseDown="HelixViewport3D_MouseDown">
                     <hx:DefaultLights/>
                     <ModelVisual3D x:Name="ColorCubeModel"/>
                 </hx:HelixViewport3D>
 
-                <StackPanel Grid.Column="1" Background="#252526" Margin="10">
-                    <TextBlock Text="3D Visualization Model" FontSize="20" Foreground="White" Margin="0 0 0 10"/>
+                <StackPanel Grid.Row="1" Grid.Column="0" Background="#252526" Margin="10 10 10 0">
+                    <TextBlock Text="2D Color Slice" FontSize="18" Foreground="White" Margin="0 0 0 4"/>
+                    <TextBlock x:Name="ColorSpace2DDescription" Foreground="LightGray" TextWrapping="Wrap"/>
+                </StackPanel>
+
+                <Border Grid.Row="2" Grid.Column="0" Margin="10" Background="#222">
+                    <Image x:Name="ColorSpace2DImage" Stretch="Fill" MouseDown="ColorSpace2DImage_MouseDown"/>
+                </Border>
+
+                <StackPanel Grid.RowSpan="3" Grid.Column="1" Background="#252526" Margin="10">
+                    <TextBlock Text="Visualization Model" FontSize="20" Foreground="White" Margin="0 0 0 10"/>
                     <ComboBox x:Name="ColorSystemComboBox" Margin="0 0 0 20"
                               ItemsSource="{Binding AvailableSystems}"
-                              SelectedIndex="0"
+                              SelectedItem="{Binding Settings.CurrentSystem, Mode=TwoWay}"
                               SelectionChanged="ColorSystemComboBox_SelectionChanged"/>
 
                     <TextBlock Text="Selected Color Info" FontSize="20" Foreground="White" Margin="0 0 0 20"/>
-                    <TextBlock Text="Click a sphere on the model to inspect the color values across all supported color systems." 
+                    <TextBlock Text="Click a sphere or the 2D slice to inspect the color values across all supported color systems."
                                Foreground="LightGray" TextWrapping="Wrap" Margin="0 0 0 20"/>
-                    <ContentControl Content="{Binding SelectedColorValues}" Foreground="White"/>
+                    <TextBlock Text="{Binding SelectedColorValues}" Foreground="White" TextWrapping="Wrap" FontFamily="Consolas"/>
                 </StackPanel>
             </Grid>
         </TabItem>

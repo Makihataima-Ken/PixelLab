@@ -4,26 +4,44 @@ namespace PixelLab.Services;
 
 public class ColorQuantizationService
 {
-    public static void ApplyUniformQuantization(ref byte r, ref byte g, ref byte b, int levelCount)
+    public static void ApplyUniformQuantization(ref byte r, ref byte g, ref byte b, int colorCount)
     {
-        if (levelCount <= 0 || levelCount >= 256)
+        if (colorCount <= 0)
             return;
 
-        int step = 256 / levelCount;
+        colorCount = Math.Clamp(colorCount, 2, 256);
+        (int redLevels, int greenLevels, int blueLevels) = GetChannelLevelCounts(colorCount);
 
-        r = QuantizeChannel(r, step, levelCount);
-        g = QuantizeChannel(g, step, levelCount);
-        b = QuantizeChannel(b, step, levelCount);
+        r = QuantizeChannel(r, redLevels);
+        g = QuantizeChannel(g, greenLevels);
+        b = QuantizeChannel(b, blueLevels);
     }
 
-    private static byte QuantizeChannel(byte value, int step, int levelCount)
+    private static (int Red, int Green, int Blue) GetChannelLevelCounts(int colorCount)
     {
-        int level = value / step;
-        if (level >= levelCount) level = levelCount - 1;
+        int bits = Math.Clamp((int)Math.Round(Math.Log2(colorCount)), 1, 8);
+        int redBits = bits / 3;
+        int greenBits = bits / 3;
+        int blueBits = bits / 3;
+        int remainder = bits % 3;
 
-        // Map to the middle of the bin to reduce error, or to min/max
-        int quantizedValue = (level * step) + (step / 2);
-        
+        if (remainder >= 1) greenBits++;
+        if (remainder >= 2) redBits++;
+
+        return (1 << redBits, 1 << greenBits, 1 << blueBits);
+    }
+
+    private static byte QuantizeChannel(byte value, int levelCount)
+    {
+        if (levelCount <= 1)
+            return 128;
+
+        if (levelCount >= 256)
+            return value;
+
+        int level = (int)Math.Round(value / 255.0 * (levelCount - 1));
+        int quantizedValue = (int)Math.Round(level * 255.0 / (levelCount - 1));
+
         return (byte)Math.Clamp(quantizedValue, 0, 255);
     }
 }

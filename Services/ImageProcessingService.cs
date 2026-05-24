@@ -9,7 +9,11 @@ public class ImageProcessingService
 {
     public WriteableBitmap ApplyAdjustments(WriteableBitmap source, ColorSystemSettings settings)
     {
-        WriteableBitmap bitmap = source.Clone();
+        BitmapSource bitmap = source;
+        if (bitmap.Format != PixelFormats.Bgra32)
+        {
+            bitmap = new FormatConvertedBitmap(bitmap, PixelFormats.Bgra32, null, 0);
+        }
 
         int width = bitmap.PixelWidth;
         int height = bitmap.PixelHeight;
@@ -23,7 +27,6 @@ public class ImageProcessingService
             byte b = pixels[i];
             byte g = pixels[i + 1];
             byte r = pixels[i + 2];
-            byte a = pixels[i + 3];
 
             ProcessPixel(ref r, ref g, ref b, settings);
 
@@ -64,7 +67,7 @@ public class ImageProcessingService
                 break;
         }
 
-        if (settings.QuantizationLevel < 256)
+        if (settings.QuantizationLevel > 0)
         {
             ColorQuantizationService.ApplyUniformQuantization(ref r, ref g, ref b, settings.QuantizationLevel);
         }

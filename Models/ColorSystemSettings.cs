@@ -37,7 +37,7 @@ public partial class ColorSystemSettings : ObservableObject
     [ObservableProperty] private bool isChannel4Visible = false;
 
     // Quantization
-    [ObservableProperty] private int quantizationLevel = 256;
+    [ObservableProperty] private int quantizationLevel = 0;
 
     public void SetupForSystem(ColorSystemType system)
     {

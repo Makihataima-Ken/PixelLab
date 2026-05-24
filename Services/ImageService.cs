@@ -1,6 +1,7 @@
 using Microsoft.Win32;
 using PixelLab.Models;
 using System.IO;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace PixelLab.Services;
@@ -36,7 +37,10 @@ public class ImageService
             bitmapImage.EndInit();
             bitmapImage.Freeze();
 
-            WriteableBitmap writeableBitmap = new(bitmapImage);
+            FormatConvertedBitmap convertedBitmap = new(bitmapImage, PixelFormats.Bgra32, null, 0);
+            convertedBitmap.Freeze();
+
+            WriteableBitmap writeableBitmap = new(convertedBitmap);
 
             FileInfo fileInfo = new(filePath);
             ImageInfo info = new()
