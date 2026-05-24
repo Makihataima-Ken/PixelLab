@@ -34,10 +34,10 @@ Select a color system to dynamically update the control sliders.
 ### 5. Color Quantization
 A uniform color quantization algorithm allows reducing the color depth of the image dynamically. By selecting a palette size, you can limit the image to a smaller number of colors (for example, 4 colors) to visualize low-color palettes and retro-style constraints.
 
-### 6. Color Space Visualization
-Navigate to the **Color Plane** tab to explore interactive 2D planes for the supported color systems.
-- Hover over any point on the plane to inspect that pixel color.
-- The hovered color is synchronized with all supported color systems (RGB, HSV, CMYK, YUV, YCbCr, LAB).
+### 6. Pixel Color Inspector
+Hover over the edited image preview to inspect the pixel under the cursor.
+- The inspector shows the pixel coordinates, a live color swatch, and converted values across RGB, HSV, CMYK, YUV, YCbCr, and LAB.
+- The sampled color comes from the currently displayed processed image, so channel edits and quantization are reflected immediately.
 
 ### 7. Core Tools
 - **Save Image:** Export your current processed image to disk as a PNG or JPG.

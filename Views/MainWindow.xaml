@@ -69,116 +69,83 @@
                 </StackPanel>
 
                 <!-- CENTER IMAGE -->
-                <Border Grid.Row="1" Grid.Column="1" Margin="10" Background="#333">
-                    <Image Source="{Binding DisplayedImage}" Stretch="Uniform"/>
+                <Border Grid.Row="1" Grid.Column="1" Margin="10" Background="#333" ClipToBounds="True">
+                    <Image x:Name="EditedImage"
+                           Source="{Binding DisplayedImage}"
+                           Stretch="Uniform"
+                           MouseMove="EditedImage_MouseMove"
+                           MouseLeave="EditedImage_MouseLeave"/>
                 </Border>
 
                 <!-- RIGHT PANEL -->
-                <StackPanel Grid.Row="1" Grid.Column="2" Background="#252526" Margin="10">
-                    
-                    <TextBlock Text="Color Quantization" FontSize="24" Foreground="White" Margin="0 0 0 10"/>
-                    <StackPanel Orientation="Horizontal" Margin="0 0 0 20">
-                        <TextBlock Text="Palette:" Foreground="White" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                        <ComboBox Width="120"
-                                  ItemsSource="{Binding QuantizationOptions}"
-                                  DisplayMemberPath="Label"
-                                  SelectedItem="{Binding SelectedQuantizationOption}"/>
+                <ScrollViewer Grid.Row="1" Grid.Column="2" Background="#252526" Margin="10" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Text="Color Quantization" FontSize="24" Foreground="White" Margin="0 0 0 10"/>
+                        <StackPanel Orientation="Horizontal" Margin="0 0 0 20">
+                            <TextBlock Text="Palette:" Foreground="White" VerticalAlignment="Center" Margin="0 0 10 0"/>
+                            <ComboBox Width="120"
+                                      ItemsSource="{Binding QuantizationOptions}"
+                                      DisplayMemberPath="Label"
+                                      SelectedItem="{Binding SelectedQuantizationOption}"/>
+                        </StackPanel>
+
+                        <TextBlock Text="Hovered Pixel" FontSize="24" Foreground="White" Margin="0 0 0 10"/>
+                        <StackPanel Orientation="Horizontal" Margin="0 0 0 10">
+                            <Border x:Name="HoveredImageColorSwatch"
+                                    Width="52"
+                                    Height="52"
+                                    Background="Black"
+                                    BorderBrush="White"
+                                    BorderThickness="1"
+                                    Margin="0 0 12 0"/>
+                            <TextBlock x:Name="HoveredImagePixelPosition"
+                                       Text="Move over the image"
+                                       Foreground="LightGray"
+                                       VerticalAlignment="Center"
+                                       TextWrapping="Wrap"/>
+                        </StackPanel>
+                        <TextBlock Text="{Binding SelectedColorValues}"
+                                   Foreground="White"
+                                   TextWrapping="Wrap"
+                                   FontFamily="Consolas"
+                                   Margin="0 0 0 20"/>
+
+                        <TextBlock Text="Image Info" FontSize="24" Foreground="White" Margin="0 0 0 20"/>
+
+                        <Grid DataContext="{Binding ImageInfoData}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Name: " Foreground="LightGray" Margin="0,5"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding FileName}" Foreground="White" Margin="5,5" TextWrapping="Wrap"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Format: " Foreground="LightGray" Margin="0,5"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Format}" Foreground="White" Margin="5,5"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Width: " Foreground="LightGray" Margin="0,5"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Width}" Foreground="White" Margin="5,5"/>
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Height: " Foreground="LightGray" Margin="0,5"/>
+                            <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Height}" Foreground="White" Margin="5,5"/>
+
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="Size: " Foreground="LightGray" Margin="0,5"/>
+                            <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding FormattedStorageSize}" Foreground="White" Margin="5,5"/>
+
+                            <TextBlock Grid.Row="5" Grid.Column="0" Text="Total Pixels: " Foreground="LightGray" Margin="0,5"/>
+                            <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding TotalPixels}" Foreground="White" Margin="5,5"/>
+                        </Grid>
                     </StackPanel>
-
-                    <TextBlock Text="Image Info" FontSize="24" Foreground="White" Margin="0 0 0 20"/>
-
-                    <Grid DataContext="{Binding ImageInfoData}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-
-                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Name: " Foreground="LightGray" Margin="0,5"/>
-                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding FileName}" Foreground="White" Margin="5,5" TextWrapping="Wrap"/>
-
-                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Format: " Foreground="LightGray" Margin="0,5"/>
-                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Format}" Foreground="White" Margin="5,5"/>
-
-                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Width: " Foreground="LightGray" Margin="0,5"/>
-                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Width}" Foreground="White" Margin="5,5"/>
-
-                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Height: " Foreground="LightGray" Margin="0,5"/>
-                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Height}" Foreground="White" Margin="5,5"/>
-
-                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Size: " Foreground="LightGray" Margin="0,5"/>
-                        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding FormattedStorageSize}" Foreground="White" Margin="5,5"/>
-
-                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Total Pixels: " Foreground="LightGray" Margin="0,5"/>
-                        <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding TotalPixels}" Foreground="White" Margin="5,5"/>
-                    </Grid>
-                </StackPanel>
-            </Grid>
-        </TabItem>
-
-        <TabItem Header="Color Plane" Foreground="Black">
-            <Grid Background="#1E1E1E">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="300"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-
-                <StackPanel Grid.Row="0" Grid.Column="0" Background="#252526" Margin="10 10 10 0">
-                    <TextBlock Text="2D Color Plane" FontSize="18" Foreground="White" Margin="0 0 0 4"/>
-                    <TextBlock x:Name="ColorSpace2DDescription" Foreground="LightGray" TextWrapping="Wrap"/>
-                </StackPanel>
-
-                <Border Grid.Row="1" Grid.Column="0" Margin="10" Background="#222" ClipToBounds="True">
-                    <Grid>
-                        <Image x:Name="ColorSpace2DImage"
-                               Stretch="Fill"
-                               MouseMove="ColorSpace2DImage_MouseMove"
-                               MouseLeave="ColorSpace2DImage_MouseLeave"/>
-                        <Canvas IsHitTestVisible="False">
-                            <Ellipse x:Name="ColorHoverMarker"
-                                     Width="14"
-                                     Height="14"
-                                     Stroke="White"
-                                     StrokeThickness="2"
-                                     Fill="#66000000"
-                                     Visibility="Collapsed"/>
-                        </Canvas>
-                    </Grid>
-                </Border>
-
-                <StackPanel Grid.RowSpan="2" Grid.Column="1" Background="#252526" Margin="10">
-                    <TextBlock Text="Plane Model" FontSize="20" Foreground="White" Margin="0 0 0 10"/>
-                    <ComboBox x:Name="ColorSystemComboBox" Margin="0 0 0 20"
-                              ItemsSource="{Binding AvailableSystems}"
-                              SelectedItem="{Binding Settings.CurrentSystem, Mode=TwoWay}"
-                              SelectionChanged="ColorSystemComboBox_SelectionChanged"/>
-
-                    <TextBlock Text="Hover Preview" FontSize="20" Foreground="White" Margin="0 0 0 10"/>
-                    <Border x:Name="HoveredColorSwatch"
-                            Width="64"
-                            Height="64"
-                            HorizontalAlignment="Left"
-                            Background="Black"
-                            BorderBrush="White"
-                            BorderThickness="1"
-                            Margin="0 0 0 20"/>
-
-                    <TextBlock Text="Selected Color Info" FontSize="20" Foreground="White" Margin="0 0 0 20"/>
-                    <TextBlock Text="Hover over a point on the 2D plane to inspect that pixel color across all supported color systems."
-                               Foreground="LightGray" TextWrapping="Wrap" Margin="0 0 0 20"/>
-                    <TextBlock Text="{Binding SelectedColorValues}" Foreground="White" TextWrapping="Wrap" FontFamily="Consolas"/>
-                </StackPanel>
+                </ScrollViewer>
             </Grid>
         </TabItem>
     </TabControl>
