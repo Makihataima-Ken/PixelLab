@@ -26,8 +26,13 @@ public partial class MainWindow : Window
 
     private void MainWindow_Loaded(object sender, RoutedEventArgs e)
     {
-        if (ColorSystemComboBox.SelectedItem == null)
-            ColorSystemComboBox.SelectedIndex = 0;
+        var initialSystem = ColorSystemType.RGB;
+        if (ColorSystemComboBox.SelectedItem is ColorSystemType selectedSystem)
+        {
+            initialSystem = selectedSystem;
+        }
+
+        GenerateColorCube(initialSystem);
     }
 
     private void ColorSystemComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
