@@ -1,8 +1,11 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using HelixToolkit.Wpf;
 using PixelLab.ViewModels;
+using PixelLab.Models;
 using System.Windows.Input;
 using System.Linq;
 
@@ -23,11 +26,21 @@ public partial class MainWindow : Window
 
     private void MainWindow_Loaded(object sender, RoutedEventArgs e)
     {
-        GenerateColorCube();
+        if (ColorSystemComboBox.SelectedItem == null)
+            ColorSystemComboBox.SelectedIndex = 0;
     }
 
-    private void GenerateColorCube()
+    private void ColorSystemComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
+        if (ColorSystemComboBox.SelectedItem is ColorSystemType systemType)
+        {
+            GenerateColorCube(systemType);
+        }
+    }
+
+    private void GenerateColorCube(ColorSystemType systemType)
+    {
+        ColorCubeModel.Children.Clear();
         int steps = 8;
         double stepSize = 255.0 / (steps - 1);
 
@@ -42,10 +55,53 @@ public partial class MainWindow : Window
                     byte blue = (byte)(b * stepSize);
 
                     var color = Color.FromRgb(red, green, blue);
+                    
+                    double x = 0, y = 0, z = 0;
+
+                    switch (systemType)
+                    {
+                        case ColorSystemType.RGB:
+                            x = red / 25.5;
+                            y = green / 25.5;
+                            z = blue / 25.5;
+                            break;
+                        case ColorSystemType.HSV:
+                            PixelLab.Services.ColorConversionService.RgbToHsv(red, green, blue, out double h, out double s, out double v);
+                            double angle = h * Math.PI / 180.0;
+                            double radius = s * 5.0;
+                            x = radius * Math.Cos(angle);
+                            y = radius * Math.Sin(angle);
+                            z = v * 10.0;
+                            break;
+                        case ColorSystemType.CMYK:
+                            PixelLab.Services.ColorConversionService.RgbToCmyk(red, green, blue, out double c, out double m, out double yCmyk, out double k);
+                            x = c * 10.0;
+                            y = m * 10.0;
+                            z = yCmyk * 10.0;
+                            break;
+                        case ColorSystemType.YUV:
+                            PixelLab.Services.ColorConversionService.RgbToYuv(red, green, blue, out double yYuv, out double u, out double vYuv);
+                            x = u / 10.0;
+                            y = vYuv / 10.0;
+                            z = yYuv / 25.5;
+                            break;
+                        case ColorSystemType.YCbCr:
+                            PixelLab.Services.ColorConversionService.RgbToYCbCr(red, green, blue, out double yCbCr, out double cb, out double cr);
+                            x = (cb - 128) / 10.0;
+                            y = (cr - 128) / 10.0;
+                            z = yCbCr / 25.5;
+                            break;
+                        case ColorSystemType.LAB:
+                            PixelLab.Services.ColorConversionService.RgbToLab(red, green, blue, out double l, out double a, out double bLab);
+                            x = a / 10.0;
+                            y = bLab / 10.0;
+                            z = l / 10.0;
+                            break;
+                    }
 
                     var sphere = new SphereVisual3D
                     {
-                        Center = new Point3D(red / 25.5, green / 25.5, blue / 25.5),
+                        Center = new Point3D(x, y, z),
                         Radius = 0.4,
                         Fill = new SolidColorBrush(color)
                     };
