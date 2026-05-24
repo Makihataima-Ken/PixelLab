@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PixelLab"
-        xmlns:hx="http://helix-toolkit.org/wpf"
         mc:Ignorable="d"
         Title="PixelLab" Height="700" Width="1200"
         AllowDrop="True" Drop="Window_Drop">
@@ -124,41 +123,59 @@
             </Grid>
         </TabItem>
 
-        <TabItem Header="Color Spaces" Foreground="Black">
+        <TabItem Header="Color Plane" Foreground="Black">
             <Grid Background="#1E1E1E">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="300"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="2*"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <hx:HelixViewport3D Grid.Row="0" Grid.Column="0" ZoomExtentsWhenLoaded="True" Background="#222" MouseDown="HelixViewport3D_MouseDown">
-                    <hx:DefaultLights/>
-                    <ModelVisual3D x:Name="ColorCubeModel"/>
-                </hx:HelixViewport3D>
-
-                <StackPanel Grid.Row="1" Grid.Column="0" Background="#252526" Margin="10 10 10 0">
-                    <TextBlock Text="2D Color Slice" FontSize="18" Foreground="White" Margin="0 0 0 4"/>
+                <StackPanel Grid.Row="0" Grid.Column="0" Background="#252526" Margin="10 10 10 0">
+                    <TextBlock Text="2D Color Plane" FontSize="18" Foreground="White" Margin="0 0 0 4"/>
                     <TextBlock x:Name="ColorSpace2DDescription" Foreground="LightGray" TextWrapping="Wrap"/>
                 </StackPanel>
 
-                <Border Grid.Row="2" Grid.Column="0" Margin="10" Background="#222">
-                    <Image x:Name="ColorSpace2DImage" Stretch="Fill" MouseDown="ColorSpace2DImage_MouseDown"/>
+                <Border Grid.Row="1" Grid.Column="0" Margin="10" Background="#222" ClipToBounds="True">
+                    <Grid>
+                        <Image x:Name="ColorSpace2DImage"
+                               Stretch="Fill"
+                               MouseMove="ColorSpace2DImage_MouseMove"
+                               MouseLeave="ColorSpace2DImage_MouseLeave"/>
+                        <Canvas IsHitTestVisible="False">
+                            <Ellipse x:Name="ColorHoverMarker"
+                                     Width="14"
+                                     Height="14"
+                                     Stroke="White"
+                                     StrokeThickness="2"
+                                     Fill="#66000000"
+                                     Visibility="Collapsed"/>
+                        </Canvas>
+                    </Grid>
                 </Border>
 
-                <StackPanel Grid.RowSpan="3" Grid.Column="1" Background="#252526" Margin="10">
-                    <TextBlock Text="Visualization Model" FontSize="20" Foreground="White" Margin="0 0 0 10"/>
+                <StackPanel Grid.RowSpan="2" Grid.Column="1" Background="#252526" Margin="10">
+                    <TextBlock Text="Plane Model" FontSize="20" Foreground="White" Margin="0 0 0 10"/>
                     <ComboBox x:Name="ColorSystemComboBox" Margin="0 0 0 20"
                               ItemsSource="{Binding AvailableSystems}"
                               SelectedItem="{Binding Settings.CurrentSystem, Mode=TwoWay}"
                               SelectionChanged="ColorSystemComboBox_SelectionChanged"/>
 
+                    <TextBlock Text="Hover Preview" FontSize="20" Foreground="White" Margin="0 0 0 10"/>
+                    <Border x:Name="HoveredColorSwatch"
+                            Width="64"
+                            Height="64"
+                            HorizontalAlignment="Left"
+                            Background="Black"
+                            BorderBrush="White"
+                            BorderThickness="1"
+                            Margin="0 0 0 20"/>
+
                     <TextBlock Text="Selected Color Info" FontSize="20" Foreground="White" Margin="0 0 0 20"/>
-                    <TextBlock Text="Click a sphere or the 2D slice to inspect the color values across all supported color systems."
+                    <TextBlock Text="Hover over a point on the 2D plane to inspect that pixel color across all supported color systems."
                                Foreground="LightGray" TextWrapping="Wrap" Margin="0 0 0 20"/>
                     <TextBlock Text="{Binding SelectedColorValues}" Foreground="White" TextWrapping="Wrap" FontFamily="Consolas"/>
                 </StackPanel>

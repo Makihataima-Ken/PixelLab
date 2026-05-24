@@ -34,10 +34,10 @@ Select a color system to dynamically update the control sliders.
 ### 5. Color Quantization
 A uniform color quantization algorithm allows reducing the color depth of the image dynamically. By selecting a palette size, you can limit the image to a smaller number of colors (for example, 4 colors) to visualize low-color palettes and retro-style constraints.
 
-### 6. Color Space Visualization (HelixToolkit)
-Navigate to the **Color Spaces** tab to explore interactive 3D point-cloud views and 2D slices for the supported color systems.
-- Rotate and zoom the 3D view.
-- Click any sphere or 2D slice point to inspect its mathematically converted values across all supported color systems (RGB, HSV, CMYK, YUV, YCbCr, LAB).
+### 6. Color Space Visualization
+Navigate to the **Color Plane** tab to explore interactive 2D planes for the supported color systems.
+- Hover over any point on the plane to inspect that pixel color.
+- The hovered color is synchronized with all supported color systems (RGB, HSV, CMYK, YUV, YCbCr, LAB).
 
 ### 7. Core Tools
 - **Save Image:** Export your current processed image to disk as a PNG or JPG.
@@ -53,7 +53,6 @@ The project relies on the **MVVM (Model-View-ViewModel)** design pattern using t
 - **`ColorConversionService`:** A static utility service consisting of pure mathematical conversions bridging `RGB` to other spatial definitions. Formats are converted per pixel safely preventing structural breakdown.
 - **`ImageProcessingService`:** Directly iterates over a copied `WriteableBitmap`'s byte buffer via 1D array extraction for speed. This avoids costly memory locking and UI blocking.
 - **`ColorQuantizationService`:** Performs a uniform bit-crushing effect per channel.
-- **`HelixToolkit.Wpf`:** Provides hardware-accelerated 3D rendering for the interactive Color Cube.
 
 ---
 
@@ -61,7 +60,7 @@ The project relies on the **MVVM (Model-View-ViewModel)** design pattern using t
 
 1. Open `PixelLab.sln` or the `PixelLab` folder in **Visual Studio 2022** (or Rider).
 2. Ensure you have the **.NET 8.0 SDK** installed.
-3. Build the project to restore NuGet packages (`CommunityToolkit.Mvvm` and `HelixToolkit.Wpf`).
+3. Build the project to restore NuGet packages (`CommunityToolkit.Mvvm`).
 4. Run the application (`F5`).
 
 ---
