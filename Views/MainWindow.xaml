@@ -128,7 +128,16 @@
                     <ColumnDefinition Width="300"/>
                 </Grid.ColumnDefinitions>
 
-                <hx:HelixViewport3D Grid.Column="0" ZoomExtentsWhenLoaded="True" Background="#222" MouseDown="HelixViewport3D_MouseDown">
+                <hx:HelixViewport3D x:Name="ColorCubeViewport"
+                                    Grid.Column="0"
+                                    ZoomExtentsWhenLoaded="True"
+                                    Background="#222"
+                                    RotateGesture="LeftClick"
+                                    PanGesture="RightClick"
+                                    RotateAroundMouseDownPoint="True"
+                                    ZoomAroundMouseDownPoint="True"
+                                    MouseLeftButtonDown="HelixViewport3D_MouseLeftButtonDown"
+                                    MouseLeftButtonUp="HelixViewport3D_MouseLeftButtonUp">
                     <hx:DefaultLights/>
                     <ModelVisual3D x:Name="ColorCubeModel"/>
                 </hx:HelixViewport3D>
@@ -137,7 +146,7 @@
                     <TextBlock Text="3D Visualization Model" FontSize="20" Foreground="White" Margin="0 0 0 10"/>
                     <ComboBox x:Name="ColorSystemComboBox" Margin="0 0 0 20"
                               ItemsSource="{Binding AvailableSystems}"
-                              SelectedIndex="0"
+                              SelectedItem="{Binding Settings.CurrentSystem, Mode=TwoWay}"
                               SelectionChanged="ColorSystemComboBox_SelectionChanged"/>
 
                     <TextBlock Text="Selected Color Info" FontSize="20" Foreground="White" Margin="0 0 0 20"/>
